@@ -46,8 +46,8 @@ document.getElementById("startButton").addEventListener("click", async () => {
     const snarePart = new Tone.Part((time) => {
         snare.triggerAttackRelease("16n", time);
     }, [
-        ["0:1:0"], // Segundo tiempo del compás 1
-        ["0:3:0"], // Cuarto tiempo del compás 1
+        ["0:0:1"], // Segundo tiempo del compás 1
+        ["3:0:0"], // Cuarto tiempo del compás 1
         ["1:1:0"], // Segundo tiempo del compás 2
         ["1:3:0"], // Cuarto tiempo del compás 2
     ]);
