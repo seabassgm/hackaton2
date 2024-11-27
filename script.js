@@ -32,6 +32,9 @@ document.getElementById("startButton").addEventListener("click", async () => {
     // Crear un sintetizador polifónico para el arpegiador
     const arpeggiator = new Tone.PolySynth(Tone.Synth).toDestination();
 
+    // Crear un sintetizador monofónico para el piano
+    const piano = new Tone.PolySynth(Tone.Synth).toDestination();
+    
     // Configurar un loop para el arpegiador con Sol menor
     const arpeggioLoop = new Tone.Loop((time) => {
         const pjanooNotes = ["Ab4", "Db5", "Gb5", "Eb5"]; // Notas del arpegio de "Pjanoo"
@@ -43,6 +46,21 @@ document.getElementById("startButton").addEventListener("click", async () => {
         });
     }, "1m"); // Repite cada compás
 
+    // Configurar el loop para el patrón de piano
+    const pianoLoop = new Tone.Loop((time) => {
+        // Notas de los primeros dos tiempos
+        const pianoNotes = ["Bb4", "A4"]; // Si bemol y La
+        const duration = "16n"; // Dieciseisavos
+
+        // Alternar las notas en los primeros dos tiempos
+        pianoNotes.forEach((note, index) => {
+            piano.triggerAttackRelease(note, duration, time + index * Tone.Time(duration));
+        });
+
+        // Última nota con un ritmo diferente (Sol)
+        piano.triggerAttackRelease("G4", "8n", time + 2 * Tone.Time("16n")); // Ajusta el tiempo y duración según el patrón
+    }, "1m"); // Repite cada compás
+    
     // Crear un loop para el beat (kick + hi-hat)
     const beatLoop = new Tone.Loop((time) => {
         // Kick
