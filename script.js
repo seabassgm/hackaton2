@@ -42,10 +42,15 @@ document.getElementById("startButton").addEventListener("click", async () => {
         hihat.triggerAttackRelease("16n", time);
     }, "4n"); // Se ejecuta en cada negra
 
-    // Crear un loop para la tarola (suena cada dos kicks)
-    const snareLoop = new Tone.Loop((time) => {
+    // Crear un loop para la tarola (segundo y cuarto tiempo de cada compás)
+    const snarePart = new Tone.Part((time) => {
         snare.triggerAttackRelease("16n", time);
-    }, "2n"); // Se ejecuta cada dos negras
+    }, [
+        ["0:1:0"], // Segundo tiempo del compás 1
+        ["0:3:0"], // Cuarto tiempo del compás 1
+        ["1:1:0"], // Segundo tiempo del compás 2
+        ["1:3:0"], // Cuarto tiempo del compás 2
+    ]);
 
     // Configurar el transporte
     Tone.Transport.bpm.value = 125;
@@ -55,10 +60,10 @@ document.getElementById("startButton").addEventListener("click", async () => {
     Tone.Transport.scheduleRepeat((time) => {
         if (measure < 2) {
             beatLoop.start(time); // Suenan kick y hi-hat
-            snareLoop.start(time); // Suena la tarola
+            snarePart.start(time); // Suena la tarola en tiempos 2 y 4
         } else {
             beatLoop.stop(time); // Pausa
-            snareLoop.stop(time); // Pausa
+            snarePart.stop(time); // Pausa
         }
         measure = (measure + 1) % 3; // Reinicia el ciclo después de 3 compases
     }, "1m"); // Cambia cada compás (1 medida)
