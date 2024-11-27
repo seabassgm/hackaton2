@@ -1,12 +1,12 @@
 document.getElementById("startButton").addEventListener("click", async () => {
     const status = document.getElementById("status");
-    status.innerText = "Estado: Reproduciendo patrón con arpegiador...";
+    status.innerText = "Estado: Reproduciendo patrón de piano y batería...";
 
     // Necesario para iniciar Tone.js
     await Tone.start();
     console.log("Tone.js iniciado");
 
-    // Crear sintetizadores para el kick, hi-hat, tarola y arpegiador
+    // Crear sintetizadores para el kick, hi-hat, tarola y piano
     const kick = new Tone.MembraneSynth().toDestination();
     const hihat = new Tone.NoiseSynth({
         noise: {
@@ -29,46 +29,30 @@ document.getElementById("startButton").addEventListener("click", async () => {
         },
     }).toDestination();
 
-    // Crear un sintetizador polifónico para el arpegiador
-    const arpeggiator = new Tone.PolySynth(Tone.Synth).toDestination();
-
-    // Crear un sintetizador monofónico para el piano
     const piano = new Tone.PolySynth(Tone.Synth).toDestination();
-    
-    // Configurar un loop para el arpegiador con Sol menor
-    const arpeggioLoop = new Tone.Loop((time) => {
-        const pjanooNotes = ["Ab4", "Db5", "Gb5", "Eb5"]; // Notas del arpegio de "Pjanoo"
-        const duration = "8n"; // Duración de cada nota (octava nota)
 
-        // Toca las notas en secuencia
-        pjanooNotes.forEach((note, index) => {
-            arpeggiator.triggerAttackRelease(note, duration, time + index * Tone.Time(duration));
-        });
-    }, "1m"); // Repite cada compás
-
-    // Configurar el loop para el patrón de piano
+    // Configurar un loop para el patrón de piano
     const pianoLoop = new Tone.Loop((time) => {
-        // Notas de los primeros dos tiempos
-        const pianoNotes = ["Bb4", "A4"]; // Si bemol y La
-        const duration = "16n"; // Dieciseisavos
+        const pianoNotes = [
+            { note: "Bb4", duration: "8n", time: 0 }, // Bb dos veces en octavos
+            { note: "Bb4", duration: "8n", time: "0:0:2" },
+            { note: "A4", duration: "8n", time: "0:1:0" }, // A dos veces en octavos
+            { note: "A4", duration: "8n", time: "0:1:2" },
+            { note: "G4", duration: "8n.", time: "0:2:0" }, // G dos veces en octavos con puntillo
+            { note: "G4", duration: "8n.", time: "0:2:3" },
+            { note: "G4", duration: "8n", time: "0:3:2" }, // G una vez en octavo
+        ];
 
-        // Alternar las notas en los primeros dos tiempos
-        pianoNotes.forEach((note, index) => {
-            piano.triggerAttackRelease(note, duration, time + index * Tone.Time(duration));
+        pianoNotes.forEach(({ note, duration, time: noteTime }) => {
+            piano.triggerAttackRelease(note, duration, time + Tone.Time(noteTime));
         });
-
-        // Última nota con un ritmo diferente (Sol)
-        piano.triggerAttackRelease("G4", "8n", time + 2 * Tone.Time("16n")); // Ajusta el tiempo y duración según el patrón
     }, "1m"); // Repite cada compás
-    
+
     // Crear un loop para el beat (kick + hi-hat)
     const beatLoop = new Tone.Loop((time) => {
-        // Kick
-        kick.triggerAttackRelease("C1", "8n", time);
-
-        // Hi-hat
-        hihat.triggerAttackRelease("16n", time);
-    }, "4n"); // Se ejecuta en cada negra
+        kick.triggerAttackRelease("C1", "8n", time); // Kick en cada negra
+        hihat.triggerAttackRelease("16n", time); // Hi-hat en cada negra
+    }, "4n");
 
     // Crear un loop para la tarola
     const snarePart = new Tone.Part((time) => {
@@ -79,12 +63,12 @@ document.getElementById("startButton").addEventListener("click", async () => {
     ]);
 
     snarePart.loop = true; // Hacer que la tarola se repita
-    snarePart.loopEnd = "1m"; // Repetir cada compás (1 medida)
+    snarePart.loopEnd = "1m"; // Repetir cada compás
 
     // Configurar loops
     beatLoop.start(0); // Kick y hi-hat
     snarePart.start(0); // Tarola
-    arpeggioLoop.start(0); // Arpegiador
+    pianoLoop.start(0); // Piano
 
     // Configurar el transporte
     Tone.Transport.bpm.value = 125;
