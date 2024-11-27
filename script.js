@@ -34,11 +34,11 @@ document.getElementById("startButton").addEventListener("click", async () => {
 
     // Configurar un loop para el arpegiador con Sol menor
     const arpeggioLoop = new Tone.Loop((time) => {
-        const chord = ["G4", "Bb4", "D5", "F5"]; // Notas del arpegio en Sol menor
+        const pjanooNotes = ["Ab4", "Db5", "Gb5", "Eb5"]; // Notas del arpegio de "Pjanoo"
         const duration = "8n"; // Duración de cada nota (octava nota)
 
         // Toca las notas en secuencia
-        chord.forEach((note, index) => {
+        pjanooNotes.forEach((note, index) => {
             arpeggiator.triggerAttackRelease(note, duration, time + index * Tone.Time(duration));
         });
     }, "1m"); // Repite cada compás
