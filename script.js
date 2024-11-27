@@ -23,36 +23,28 @@ document.getElementById("startButton").addEventListener("click", async () => {
     Tone.Transport.stop();
     Tone.Transport.cancel(); // Cancela todos los eventos anteriores
 
+    // Crear un loop donde kick y hi-hat suenen al mismo tiempo
+    const beatLoop = new Tone.Loop((time) => {
+        // Kick
+        kick.triggerAttackRelease("C1", "8n", time);
+
+        // Hi-hat
+        hihat.triggerAttackRelease("16n", time);
+    }, "4n"); // Se ejecuta en cada negra
+
     // Configurar el transporte
     Tone.Transport.bpm.value = 125;
 
-    // Crear el patrón de kick y hi-hat
-    const kickPart = new Tone.Part((time) => {
-        kick.triggerAttackRelease("C1", "8n", time);
-    }, [
-        ["0:0:0"], ["0:1:0"], ["0:2:0"], ["0:3:0"], // Primer compás
-        ["1:0:0"], ["1:1:0"], ["1:2:0"], ["1:3:0"], // Segundo compás
-    ]);
-
-    const hihatPart = new Tone.Part((time) => {
-        hihat.triggerAttackRelease("16n", time);
-    }, [
-        ["0:0:0"], ["0:0:2"], ["0:1:0"], ["0:1:2"], ["0:2:0"], ["0:2:2"], ["0:3:0"], ["0:3:2"], // Primer compás
-        ["1:0:0"], ["1:0:2"], ["1:1:0"], ["1:1:2"], ["1:2:0"], ["1:2:2"], ["1:3:0"], ["1:3:2"], // Segundo compás
-    ]);
-
-    // Configurar inicio y pausa
-    kickPart.loop = true; // Se repite automáticamente
-    kickPart.loopStart = "0:0:0"; // Comienza desde el principio
-    kickPart.loopEnd = "3:0:0"; // Incluye dos compases de sonido + un compás de pausa
-
-    hihatPart.loop = true; // Igual que el kick
-    hihatPart.loopStart = "0:0:0";
-    hihatPart.loopEnd = "3:0:0";
-
-    // Iniciar los patrones
-    kickPart.start(0);
-    hihatPart.start(0);
+    // Controlar el patrón (2 compases sonido + 1 compás pausa)
+    let measure = 0;
+    Tone.Transport.scheduleRepeat((time) => {
+        if (measure < 2) {
+            beatLoop.start(time); // Suenan kick y hi-hat
+        } else {
+            beatLoop.stop(time); // Pausa
+        }
+        measure = (measure + 1) % 3; // Reinicia el ciclo después de 3 compases
+    }, "1m"); // Cambia cada compás (1 medida)
 
     // Iniciar el transporte de Tone.js
     Tone.Transport.start();
