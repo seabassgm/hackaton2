@@ -9,6 +9,10 @@ document.getElementById("startButton").addEventListener("click", async () => {
     // Crear un sintetizador de kick
     const kick = new Tone.MembraneSynth().toDestination();
 
+    // Detener cualquier loop activo previo
+    Tone.Transport.stop();
+    Tone.Transport.cancel(); // Cancela todos los eventos anteriores
+
     // Configurar el loop de kick
     const kickLoop = new Tone.Loop((time) => {
         kick.triggerAttackRelease("C1", "8n", time); // Kick básico
@@ -20,12 +24,4 @@ document.getElementById("startButton").addEventListener("click", async () => {
     // Iniciar el loop
     kickLoop.start(0);
 
-    // Iniciar el transporte de Tone.js
-    Tone.Transport.start();
-
-    // Cambiar el estado después de 10 segundos (o detener manualmente)
-    setTimeout(() => {
-        status.innerText = "Estado: Kick detenido.";
-        kickLoop.stop(); // Detiene el loop después de 10 segundos
-    }, 10000); // Cambia este valor para ajustar la duración
-});
+    // Iniciar el
