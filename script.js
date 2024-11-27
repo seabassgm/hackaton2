@@ -6,7 +6,7 @@ document.getElementById("startButton").addEventListener("click", async () => {
     await Tone.start();
     console.log("Tone.js iniciado");
 
-    // Crear sintetizadores para el kick y el hi-hat
+    // Crear sintetizadores para el kick, hi-hat y tarola
     const kick = new Tone.MembraneSynth().toDestination();
     const hihat = new Tone.NoiseSynth({
         noise: {
@@ -15,6 +15,16 @@ document.getElementById("startButton").addEventListener("click", async () => {
         envelope: {
             attack: 0.005,
             decay: 0.1,
+            sustain: 0.0,
+        },
+    }).toDestination();
+    const snare = new Tone.NoiseSynth({
+        noise: {
+            type: "white",
+        },
+        envelope: {
+            attack: 0.005,
+            decay: 0.2,
             sustain: 0.0,
         },
     }).toDestination();
@@ -32,6 +42,11 @@ document.getElementById("startButton").addEventListener("click", async () => {
         hihat.triggerAttackRelease("16n", time);
     }, "4n"); // Se ejecuta en cada negra
 
+    // Crear un loop para la tarola (suena cada dos kicks)
+    const snareLoop = new Tone.Loop((time) => {
+        snare.triggerAttackRelease("16n", time);
+    }, "2n"); // Se ejecuta cada dos negras
+
     // Configurar el transporte
     Tone.Transport.bpm.value = 125;
 
@@ -40,8 +55,10 @@ document.getElementById("startButton").addEventListener("click", async () => {
     Tone.Transport.scheduleRepeat((time) => {
         if (measure < 2) {
             beatLoop.start(time); // Suenan kick y hi-hat
+            snareLoop.start(time); // Suena la tarola
         } else {
             beatLoop.stop(time); // Pausa
+            snareLoop.stop(time); // Pausa
         }
         measure = (measure + 1) % 3; // Reinicia el ciclo después de 3 compases
     }, "1m"); // Cambia cada compás (1 medida)
