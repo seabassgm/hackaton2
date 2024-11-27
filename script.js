@@ -1,40 +1,31 @@
-// Función para iniciar la canción
 document.getElementById("startButton").addEventListener("click", async () => {
     const status = document.getElementById("status");
-    status.innerText = "Estado: Reproduciendo...";
+    status.innerText = "Estado: Reproduciendo Kick...";
 
     // Necesario para iniciar Tone.js
     await Tone.start();
     console.log("Tone.js iniciado");
 
-    // Crear un sintetizador
-    const synth = new Tone.Synth().toDestination();
+    // Crear un sintetizador de kick
+    const kick = new Tone.MembraneSynth().toDestination();
 
-    // Secuencia de notas (canción simple)
-    const notes = [
-        { time: "0:0:0", note: "C4", duration: "8n" },
-        { time: "0:0:2", note: "E4", duration: "8n" },
-        { time: "0:1:0", note: "G4", duration: "8n" },
-        { time: "0:1:2", note: "C5", duration: "8n" },
-        { time: "0:2:0", note: "E5", duration: "8n" },
-        { time: "0:3:0", note: "G5", duration: "8n" },
-    ];
+    // Configurar el loop de kick
+    const kickLoop = new Tone.Loop((time) => {
+        kick.triggerAttackRelease("C1", "8n", time); // Kick básico
+    }, "4n"); // Dispara cada negra
 
-    // Crear un patrón de secuencia
-    const part = new Tone.Part((time, value) => {
-        synth.triggerAttackRelease(value.note, value.duration, time);
-    }, notes);
+    // Configurar el tempo
+    Tone.Transport.bpm.value = 125;
 
-    // Configurar loop y tempo
-    part.loop = false; // Cambia a `true` si quieres que se repita
-    part.start(0);
+    // Iniciar el loop
+    kickLoop.start(0);
 
-    // Configurar tempo
-    Tone.Transport.bpm.value = 120;
+    // Iniciar el transporte de Tone.js
     Tone.Transport.start();
 
-    // Detener después de unos segundos
+    // Cambiar el estado después de 10 segundos (o detener manualmente)
     setTimeout(() => {
-        status.innerText = "Estado: Canción terminada.";
-    }, 4000); // Ajusta el tiempo según la duración de la canción
+        status.innerText = "Estado: Kick detenido.";
+        kickLoop.stop(); // Detiene el loop después de 10 segundos
+    }, 10000); // Cambia este valor para ajustar la duración
 });
