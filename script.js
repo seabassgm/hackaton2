@@ -43,7 +43,7 @@ document.getElementById("startButton").addEventListener("click", async () => {
     }, "4n"); // Se ejecuta en cada negra
 
     // Crear un loop para la tarola (segundo y cuarto tiempo de cada compás)
-    const snarePart = new Tone.Part((time) => {
+    const snarePart = new Tone.Loop((time) => {
         snare.triggerAttackRelease("16n", time);
     }, [
         ["0:1:0"], // Segundo tiempo del compás
