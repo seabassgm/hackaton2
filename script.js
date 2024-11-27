@@ -58,14 +58,14 @@ document.getElementById("startButton").addEventListener("click", async () => {
     // Controlar el patrón (2 compases sonido + 1 compás pausa)
     let measure = 0;
     Tone.Transport.scheduleRepeat((time) => {
-        if (measure < 5) {
+        if (measure < 4) {
             beatLoop.start(time); // Suenan kick y hi-hat
             snarePart.start(time); // Suena la tarola en tiempos 2 y 4
         } else {
             beatLoop.stop(time); // Pausa
             snarePart.stop(time); // Pausa
         }
-        measure = (measure + 1) % 3; // Reinicia el ciclo después de 3 compases
+        measure = (measure + 1) % 5; // Reinicia el ciclo después de 3 compases
     }, "1m"); // Cambia cada compás (1 medida)
 
     // Iniciar el transporte de Tone.js
