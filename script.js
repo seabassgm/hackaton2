@@ -43,12 +43,16 @@ document.getElementById("startButton").addEventListener("click", async () => {
     }, "4n"); // Se ejecuta en cada negra
 
     // Crear un loop para la tarola (segundo y cuarto tiempo de cada compás)
-    const snarePart = new Tone.Loop((time) => {
+    const snarePart = new Tone.Part((time) => {
         snare.triggerAttackRelease("16n", time);
     }, [
         ["0:1:0"], // Segundo tiempo del compás
         ["0:3:0"], // Cuarto tiempo del compás
     ]);
+
+    // Configurar la tarola para que se repita indefinidamente
+    snarePart.loop = true; // Activar el loop
+    snarePart.loopEnd = "1m"; // Duración del loop: 1 compás (4 tiempos)
 
     // Configurar loops
     beatLoop.start(0); // Kick y hi-hat suenan al inicio del transporte
