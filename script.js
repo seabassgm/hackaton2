@@ -39,13 +39,13 @@ document.getElementById("startButton").addEventListener("click", async () => {
         kick.triggerAttackRelease("C1", "8n", time);
 
         // Hi-hat
-        hihat.triggerAttackRelease("16n", time);
+        hihat.triggerAttackRelease("8n", time);
     }, "4n"); // Se ejecuta en cada negra
 
     // Crear un loop para la tarola (suena cada dos kicks)
     const snareLoop = new Tone.Loop((time) => {
-        snare.triggerAttackRelease("16n", time);
-    }, "2n"); // Se ejecuta cada dos negras
+        snare.triggerAttackRelease("8n", time);
+    }, "4n"); // Se ejecuta cada dos negras
 
     // Configurar el transporte
     Tone.Transport.bpm.value = 125;
